@@ -30,17 +30,17 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Ana Sayfa",
-          tabBarIcon: ({ color }) => (
-            <Feather name="home" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="table-management"
+        name="tables"
         options={{
           title: "Masalar",
-          tabBarIcon: ({ color }) => (
-            <Feather name="clipboard" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="grid-outline" size={size} color={color} />
           ),
         }}
       />
@@ -48,8 +48,8 @@ export default function TabLayout() {
         name="staff"
         options={{
           title: "Personel",
-          tabBarIcon: ({ color }) => (
-            <Feather name="users" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people-outline" size={size} color={color} />
           ),
         }}
       />
@@ -57,9 +57,15 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: "Ayarlar",
-          tabBarIcon: ({ color }) => (
-            <Feather name="settings" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="table-management"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
