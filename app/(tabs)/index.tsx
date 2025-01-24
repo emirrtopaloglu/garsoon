@@ -24,65 +24,67 @@ const screenWidth = Dimensions.get("window").width;
 
 const Container = styled(SafeAreaView)`
   flex: 1;
-  background-color: #f8f9fa;
+  background-color: #F8FAFC;
 `;
 
 const ContentContainer = styled.View`
   flex: 1;
-  padding: 20px;
+  padding: 24px;
 `;
 
 const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 `;
 
 const HeaderLeft = styled.View``;
 
 const WelcomeText = styled.Text`
-  font-size: 15px;
-  color: #666;
-  margin-bottom: 4px;
-  letter-spacing: 0.5px;
+  font-family: 'Inter';
+  font-size: 16px;
+  color: #64748B;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
 `;
 
 const LogoImage = styled.Image`
-  width: 150px;
-  height: 45px;
+  width: 160px;
+  height: 48px;
   resize-mode: contain;
 `;
 
 const Title = styled.Text`
-  font-size: 32px;
-  font-weight: bold;
-  color: #1a1a1a;
-  letter-spacing: 0.5px;
+  font-family: 'Inter';
+  font-size: 36px;
+  font-weight: 700;
+  color: #1E293B;
+  letter-spacing: -0.5px;
 `;
 
 const WorkStatusButton = styled.TouchableOpacity<WorkStatusButtonProps>`
-  background-color: ${(props: any) => (props.isWorking ? "#ff6b6b" : "#4CAF50")};
-  padding: 12px 20px;
+  background-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#22C55E")};
+  padding: 14px 24px;
   border-radius: 16px;
   flex-direction: row;
   align-items: center;
-  shadow-color: ${(props: any) => (props.isWorking ? "#ff6b6b" : "#4CAF50")};
-  shadow-offset: 0px 8px;
-  shadow-opacity: 0.25;
-  shadow-radius: 12px;
-  elevation: 8;
+  shadow-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#22C55E")};
+  shadow-offset: 0px 4px;
+  shadow-opacity: 0.2;
+  shadow-radius: 8px;
+  elevation: 6;
 `;
 
 const WorkStatusIcon = styled(Ionicons)`
-  margin-right: 8px;
+  margin-right: 10px;
 `;
 
 const WorkStatusText = styled.Text`
   color: white;
-  font-weight: bold;
-  font-size: 15px;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.3px;
 `;
 
 const TablesContainer = styled.ScrollView`
@@ -97,38 +99,38 @@ const TablesGrid = styled.View`
 `;
 
 const TableCard = styled.TouchableOpacity<TableCardProps>`
-  width: ${(screenWidth - 60) / 2}px;
+  width: ${(screenWidth - 72) / 2}px;
   aspect-ratio: 1;
   background-color: ${(props: any) => {
     switch (props.status) {
       case "empty":
-        return "#4CAF50";
+        return "#22C55E";
       case "occupied":
-        return "#ff6b6b";
+        return "#EF4444";
       case "reserved":
-        return "#ffd93d";
+        return "#F59E0B";
       default:
-        return "#e0e0e0";
+        return "#E2E8F0";
     }
   }};
   border-radius: 24px;
-  margin-bottom: 20px;
-  padding: 24px;
+  margin-bottom: 24px;
+  padding: 28px;
   justify-content: space-between;
   shadow-color: ${(props: any) => {
     switch (props.status) {
       case "empty":
-        return "#4CAF50";
+        return "#22C55E";
       case "occupied":
-        return "#ff6b6b";
+        return "#EF4444";
       case "reserved":
-        return "#ffd93d";
+        return "#F59E0B";
       default:
-        return "#e0e0e0";
+        return "#E2E8F0";
     }
   }};
-  shadow-offset: 0px 8px;
-  shadow-opacity: 0.25;
+  shadow-offset: 0px 6px;
+  shadow-opacity: 0.2;
   shadow-radius: 12px;
   elevation: 8;
   overflow: hidden;
@@ -140,6 +142,7 @@ const TableGradient = styled(LinearGradient)`
   left: 0;
   right: 0;
   bottom: 0;
+  opacity: 0.8;
 `;
 
 const TableContent = styled.View`
@@ -150,29 +153,36 @@ const TableContent = styled.View`
 const TableInfo = styled.View``;
 
 const TableNumber = styled.Text`
-  font-size: 32px;
-  font-weight: bold;
+  font-size: 36px;
+  font-weight: 700;
   color: white;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+  letter-spacing: -0.5px;
 `;
 
 const TableStatus = styled.Text`
-  font-size: 16px;
+  font-size: 17px;
   color: white;
-  opacity: 0.9;
-  letter-spacing: 0.5px;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  opacity: 0.95;
+  letter-spacing: -0.3px;
+  font-weight: 500;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
 `;
 
 const StatusBar = styled(BlurView)`
   flex-direction: row;
   justify-content: space-around;
-  padding: 24px;
-  background-color: rgba(255, 255, 255, 0.8);
+  padding: 28px;
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  shadow-color: #000;
+  shadow-offset: 0px 4px;
+  shadow-opacity: 0.1;
+  shadow-radius: 12px;
+  elevation: 5;
 `;
 
 const StatusItem = styled.View`
@@ -180,17 +190,18 @@ const StatusItem = styled.View`
 `;
 
 const StatusCount = styled.Text`
-  font-size: 28px;
-  font-weight: bold;
-  color: #1a1a1a;
-  margin-bottom: 6px;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  font-size: 32px;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
 `;
 
 const StatusLabel = styled.Text`
-  font-size: 14px;
-  color: #666;
-  letter-spacing: 0.5px;
+  font-size: 15px;
+  color: #64748B;
+  letter-spacing: -0.3px;
+  font-weight: 500;
 `;
 
 const TableStatusIcon = styled.View`
