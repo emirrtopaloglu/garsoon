@@ -32,16 +32,29 @@ const Container = styled(SafeAreaView)`
 const ContentContainer = styled.View`
   flex: 1;
   padding: 24px;
+  padding-bottom: 100px;
 `;
 
 const Header = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
   margin-bottom: 32px;
 `;
 
-const HeaderLeft = styled.View``;
+const WelcomeContainer = styled(BlurView)`
+  padding: 24px;
+  border-radius: 24px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 24px;
+`;
+
+const WelcomeHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const WelcomeLeft = styled.View``;
 
 const WelcomeText = styled.Text`
   font-family: 'Inter';
@@ -51,15 +64,9 @@ const WelcomeText = styled.Text`
   letter-spacing: -0.3px;
 `;
 
-const LogoImage = styled.Image`
-  width: 160px;
-  height: 48px;
-  resize-mode: contain;
-`;
-
 const Title = styled.Text`
   font-family: 'Inter';
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   color: #1E293B;
   letter-spacing: -0.5px;
@@ -67,7 +74,7 @@ const Title = styled.Text`
 
 const WorkStatusButton = styled.TouchableOpacity<WorkStatusButtonProps>`
   background-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#22C55E")};
-  padding: 14px 24px;
+  padding: 12px 20px;
   border-radius: 16px;
   flex-direction: row;
   align-items: center;
@@ -79,14 +86,63 @@ const WorkStatusButton = styled.TouchableOpacity<WorkStatusButtonProps>`
 `;
 
 const WorkStatusIcon = styled(Ionicons)`
-  margin-right: 10px;
+  margin-right: 8px;
 `;
 
 const WorkStatusText = styled.Text`
   color: white;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
   letter-spacing: -0.3px;
+`;
+
+const StatsContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const StatItem = styled.View`
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 16px;
+  border-radius: 16px;
+  min-width: 90px;
+`;
+
+const StatCount = styled.Text`
+  font-size: 24px;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 4px;
+`;
+
+const StatLabel = styled.Text`
+  font-size: 13px;
+  color: #64748B;
+  letter-spacing: -0.2px;
+`;
+
+const FilterContainer = styled.ScrollView`
+  margin-bottom: 24px;
+  flex-grow: 0;
+`;
+
+const FilterButton = styled.TouchableOpacity<{ isActive: boolean }>`
+  padding: 12px 20px;
+  background-color: ${(props: any) => (props.isActive ? "#22C55E" : "white")};
+  border-radius: 12px;
+  margin-right: 12px;
+  shadow-color: ${(props: any) => (props.isActive ? "#22C55E" : "#000")};
+  shadow-offset: 0px 2px;
+  shadow-opacity: ${(props: any) => (props.isActive ? 0.2 : 0.05)};
+  shadow-radius: 8px;
+  elevation: 3;
+`;
+
+const FilterText = styled.Text<{ isActive: boolean }>`
+  color: ${(props: any) => (props.isActive ? "white" : "#64748B")};
+  font-size: 14px;
+  font-weight: 600;
 `;
 
 const TablesContainer = styled.ScrollView`
@@ -97,7 +153,6 @@ const TablesGrid = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding-top: 10px;
 `;
 
 const TableCard = styled.TouchableOpacity<TableCardProps>`
@@ -117,7 +172,7 @@ const TableCard = styled.TouchableOpacity<TableCardProps>`
   }};
   border-radius: 24px;
   margin-bottom: 24px;
-  padding: 28px;
+  padding: 24px;
   justify-content: space-between;
   shadow-color: ${(props: any) => {
     switch (props.status) {
@@ -171,41 +226,6 @@ const TableStatus = styled.Text`
   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
 `;
 
-const StatusBar = styled(BlurView)`
-  flex-direction: row;
-  justify-content: space-around;
-  padding: 28px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 24px;
-  margin-bottom: 32px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  shadow-color: #000;
-  shadow-offset: 0px 4px;
-  shadow-opacity: 0.1;
-  shadow-radius: 12px;
-  elevation: 5;
-`;
-
-const StatusItem = styled.View`
-  align-items: center;
-`;
-
-const StatusCount = styled.Text`
-  font-size: 32px;
-  font-weight: 700;
-  color: #1E293B;
-  margin-bottom: 8px;
-  letter-spacing: -0.5px;
-`;
-
-const StatusLabel = styled.Text`
-  font-size: 15px;
-  color: #64748B;
-  letter-spacing: -0.3px;
-  font-weight: 500;
-`;
-
 const TableStatusIcon = styled.View`
   width: 48px;
   height: 48px;
@@ -215,29 +235,6 @@ const TableStatusIcon = styled.View`
   align-items: center;
   margin-bottom: 12px;
   border: 1px solid rgba(255, 255, 255, 0.3);
-`;
-
-const FilterContainer = styled.ScrollView`
-  margin-bottom: 24px;
-  flex-grow: 0;
-`;
-
-const FilterButton = styled.TouchableOpacity<{ isActive: boolean }>`
-  padding: 12px 20px;
-  background-color: ${(props: any) => (props.isActive ? "#22C55E" : "white")};
-  border-radius: 12px;
-  margin-right: 12px;
-  shadow-color: ${(props: any) => (props.isActive ? "#22C55E" : "#000")};
-  shadow-offset: 0px 2px;
-  shadow-opacity: ${(props: any) => (props.isActive ? 0.2 : 0.05)};
-  shadow-radius: 8px;
-  elevation: 3;
-`;
-
-const FilterText = styled.Text<{ isActive: boolean }>`
-  color: ${(props: any) => (props.isActive ? "white" : "#64748B")};
-  font-size: 14px;
-  font-weight: 600;
 `;
 
 export default function HomePage() {
@@ -338,37 +335,39 @@ export default function HomePage() {
   return (
     <Container>
       <ContentContainer>
-        <Header>
-          <HeaderLeft>
-            <WelcomeText>Hoş Geldiniz</WelcomeText>
-            <Title>Masalar</Title>
-          </HeaderLeft>
-          <WorkStatusButton isWorking={isWorking} onPress={toggleWorkStatus}>
-            <WorkStatusIcon
-              name={isWorking ? "stop-circle" : "play"}
-              size={20}
-              color="white"
-            />
-            <WorkStatusText>
-              {isWorking ? "Çalışmayı Bırak" : "İşe Başla"}
-            </WorkStatusText>
-          </WorkStatusButton>
-        </Header>
+        <WelcomeContainer intensity={80}>
+          <WelcomeHeader>
+            <WelcomeLeft>
+              <WelcomeText>Hoş Geldiniz</WelcomeText>
+              <Title>Masalar</Title>
+            </WelcomeLeft>
+            <WorkStatusButton isWorking={isWorking} onPress={toggleWorkStatus}>
+              <WorkStatusIcon
+                name={isWorking ? "stop-circle" : "play"}
+                size={20}
+                color="white"
+              />
+              <WorkStatusText>
+                {isWorking ? "Çalışmayı Bırak" : "İşe Başla"}
+              </WorkStatusText>
+            </WorkStatusButton>
+          </WelcomeHeader>
 
-        <StatusBar intensity={80} tint="light">
-          <StatusItem>
-            <StatusCount>{statusCounts.empty}</StatusCount>
-            <StatusLabel>Boş Masa</StatusLabel>
-          </StatusItem>
-          <StatusItem>
-            <StatusCount>{statusCounts.occupied}</StatusCount>
-            <StatusLabel>Dolu Masa</StatusLabel>
-          </StatusItem>
-          <StatusItem>
-            <StatusCount>{statusCounts.reserved}</StatusCount>
-            <StatusLabel>Rezerve</StatusLabel>
-          </StatusItem>
-        </StatusBar>
+          <StatsContainer>
+            <StatItem>
+              <StatCount>{statusCounts.empty}</StatCount>
+              <StatLabel>Boş Masa</StatLabel>
+            </StatItem>
+            <StatItem>
+              <StatCount>{statusCounts.occupied}</StatCount>
+              <StatLabel>Dolu Masa</StatLabel>
+            </StatItem>
+            <StatItem>
+              <StatCount>{statusCounts.reserved}</StatCount>
+              <StatLabel>Rezerve</StatLabel>
+            </StatItem>
+          </StatsContainer>
+        </WelcomeContainer>
 
         <FilterContainer horizontal showsHorizontalScrollIndicator={false}>
           {filters.map((filter) => (
