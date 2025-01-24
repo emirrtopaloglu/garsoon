@@ -10,6 +10,8 @@ import { BlurView } from "expo-blur";
 interface TableData {
   id: number;
   status: "empty" | "occupied" | "reserved";
+  orders?: number;
+  total?: number;
 }
 
 interface WorkStatusButtonProps {
@@ -215,16 +217,47 @@ const TableStatusIcon = styled.View`
   border: 1px solid rgba(255, 255, 255, 0.3);
 `;
 
+const FilterContainer = styled.ScrollView`
+  margin-bottom: 24px;
+  flex-grow: 0;
+`;
+
+const FilterButton = styled.TouchableOpacity<{ isActive: boolean }>`
+  padding: 12px 20px;
+  background-color: ${(props: any) => (props.isActive ? "#22C55E" : "white")};
+  border-radius: 12px;
+  margin-right: 12px;
+  shadow-color: ${(props: any) => (props.isActive ? "#22C55E" : "#000")};
+  shadow-offset: 0px 2px;
+  shadow-opacity: ${(props: any) => (props.isActive ? 0.2 : 0.05)};
+  shadow-radius: 8px;
+  elevation: 3;
+`;
+
+const FilterText = styled.Text<{ isActive: boolean }>`
+  color: ${(props: any) => (props.isActive ? "white" : "#64748B")};
+  font-size: 14px;
+  font-weight: 600;
+`;
+
 export default function HomePage() {
   const [isWorking, setIsWorking] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("all");
   const [tables, setTables] = useState<TableData[]>([
     { id: 1, status: "empty" },
-    { id: 2, status: "occupied" },
+    { id: 2, status: "occupied", orders: 3, total: 240 },
     { id: 3, status: "reserved" },
     { id: 4, status: "empty" },
-    { id: 5, status: "empty" },
-    { id: 6, status: "occupied" },
+    { id: 5, status: "occupied", orders: 2, total: 180 },
+    { id: 6, status: "empty" },
   ]);
+
+  const filters = [
+    { id: "all", label: "Tümü" },
+    { id: "empty", label: "Boş" },
+    { id: "occupied", label: "Dolu" },
+    { id: "reserved", label: "Rezerve" },
+  ];
 
   const toggleWorkStatus = () => {
     if (isWorking) {
@@ -295,6 +328,11 @@ export default function HomePage() {
     }
   };
 
+  const filteredTables = tables.filter((table) => {
+    if (activeFilter === "all") return true;
+    return table.status === activeFilter;
+  });
+
   const statusCounts = getStatusCounts();
 
   return (
@@ -332,9 +370,23 @@ export default function HomePage() {
           </StatusItem>
         </StatusBar>
 
+        <FilterContainer horizontal showsHorizontalScrollIndicator={false}>
+          {filters.map((filter) => (
+            <FilterButton
+              key={filter.id}
+              isActive={activeFilter === filter.id}
+              onPress={() => setActiveFilter(filter.id)}
+            >
+              <FilterText isActive={activeFilter === filter.id}>
+                {filter.label}
+              </FilterText>
+            </FilterButton>
+          ))}
+        </FilterContainer>
+
         <TablesContainer showsVerticalScrollIndicator={false}>
           <TablesGrid>
-            {tables.map((table) => (
+            {filteredTables.map((table) => (
               <TableCard
                 key={table.id}
                 status={table.status}
