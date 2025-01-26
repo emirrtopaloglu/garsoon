@@ -176,19 +176,158 @@ const menuItems = [
   { id: 8, name: 'Akdeniz Salata', price: 40, category: 'Salatalar' },
 ];
 
+interface ExtraOption {
+  id: number;
+  name: string;
+  price: number;
+}
+
+interface ExtraOptionsModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSave: (data: { selectedExtras: number[]; note: string }) => void;
+}
+
+interface ExtraOptionButtonProps {
+  isSelected: boolean;
+}
+
+interface ExtraOptionTextProps {
+  isSelected: boolean;
+}
+
+const extraOptions: ExtraOption[] = [
+  { id: 1, name: "Mısır", price: 5 },
+  { id: 2, name: "Mantar", price: 5 },
+  { id: 3, name: "Sucuk", price: 10 },
+  { id: 4, name: "Zeytin", price: 5 },
+  { id: 5, name: "Biber", price: 5 },
+  { id: 6, name: "Soğan", price: 5 },
+];
+
+const ExtraOptionButton = styled.TouchableOpacity<ExtraOptionButtonProps>`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: ${(props: ExtraOptionButtonProps) => props.isSelected ? "#e6fff0" : "#f8f9fa"};
+  border-radius: 16px;
+  margin-bottom: 12px;
+  border: 1px solid ${(props: ExtraOptionButtonProps) => props.isSelected ? "#06ef7f" : "transparent"};
+`;
+
+const ExtraOptionText = styled.Text<ExtraOptionTextProps>`
+  font-size: 16px;
+  color: #1a1a1a;
+  font-weight: ${(props: ExtraOptionTextProps) => props.isSelected ? "bold" : "normal"};
+`;
+
+const ExtraOptionPrice = styled.Text`
+  font-size: 16px;
+  color: #06ef7f;
+  font-weight: bold;
+`;
+
+const toggleExtra = (id: number) => {
+  setSelectedExtras(prev => 
+    prev.includes(id) 
+      ? prev.filter(item => item !== id)
+      : [...prev, id]
+  );
+};
+
+const ExtraOptionsModal: React.FC<ExtraOptionsModalProps> = ({ visible, onClose, onSave }) => {
+  const [selectedExtras, setSelectedExtras] = useState<number[]>([]);
+  const [note, setNote] = useState("");
+
+  return (
+    <Modal visible={visible} transparent animationType="slide">
+      <Overlay>
+        <Content intensity={80}>
+          <Header>
+            <Title>Ekstra Seçenekler</Title>
+            <CloseButton onPress={onClose}>
+              <Ionicons name="close" size={24} color="#1a1a1a" />
+            </CloseButton>
+          </Header>
+
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {extraOptions.map(option => (
+              <ExtraOptionButton
+                key={option.id}
+                isSelected={selectedExtras.includes(option.id)}
+                onPress={() => toggleExtra(option.id)}
+              >
+                <ExtraOptionText isSelected={selectedExtras.includes(option.id)}>
+                  {option.name}
+                </ExtraOptionText>
+                <ExtraOptionPrice>+{option.price} TL</ExtraOptionPrice>
+              </ExtraOptionButton>
+            ))}
+
+            <Input
+              placeholder="Not ekle..."
+              value={note}
+              onChangeText={setNote}
+              multiline
+              numberOfLines={3}
+              textAlignVertical="top"
+            />
+
+            <AddButton onPress={() => onSave({ selectedExtras, note })}>
+              <AddButtonText>Kaydet</AddButtonText>
+            </AddButton>
+          </ScrollView>
+        </Content>
+      </Overlay>
+    </Modal>
+  );
+};
+
+const Overlay = styled.View`
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: flex-end;
+`;
+
+const Content = styled(BlurView)`
+  background-color: white;
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  padding: 24px;
+  padding-bottom: 48px;
+`;
+
+const Input = styled.TextInput`
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 16px;
+  margin-bottom: 16px;
+`;
+
 export default function AddOrderModal({ visible, onClose, onAddOrder }: AddOrderModalProps) {
   const [selectedCategory, setSelectedCategory] = useState('Tümü');
   const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+  const [showExtraOptions, setShowExtraOptions] = useState(false);
+  const [extras, setExtras] = useState<{ selectedExtras: number[], note: string }>({ selectedExtras: [], note: "" });
 
   const filteredItems = selectedCategory === 'Tümü'
     ? menuItems
     : menuItems.filter(item => item.category === selectedCategory);
 
   const handleQuantityChange = (itemId: number, change: number) => {
-    setQuantities(prev => ({
-      ...prev,
-      [itemId]: Math.max(0, (prev[itemId] || 0) + change)
-    }));
+    const newQuantities = {
+      ...quantities,
+      [itemId]: Math.max(0, (quantities[itemId] || 0) + change)
+    };
+    setQuantities(newQuantities);
+
+    // Pizza siparişi için ekstra seçenekler modalını aç
+    const item = menuItems.find(m => m.id === itemId);
+    if (item?.category === 'Pizza' && newQuantities[itemId] === 1) {
+      setShowExtraOptions(true);
+    }
   };
 
   const handleAddOrder = () => {
@@ -196,10 +335,24 @@ export default function AddOrderModal({ visible, onClose, onAddOrder }: AddOrder
       .filter(([_, quantity]) => quantity > 0)
       .map(([itemId, quantity]) => {
         const item = menuItems.find(m => m.id === parseInt(itemId));
+        const isPizza = item?.category === 'Pizza';
+        
+        // Ekstra malzemelerin toplam fiyatını hesapla
+        const extrasTotalPrice = isPizza && quantity === 1 ? 
+          extras.selectedExtras.reduce((total, extraId) => {
+            const extraOption = extraOptions.find(opt => opt.id === extraId);
+            return total + (extraOption?.price || 0);
+          }, 0) : 0;
+
         return {
           name: item!.name,
-          price: item!.price * quantity,
-          quantity
+          price: (item!.price * quantity) + extrasTotalPrice,
+          quantity,
+          // Sadece pizza ve adet 1 ise ekstraları ekle
+          ...(isPizza && quantity === 1 ? {
+            extras: extras.selectedExtras,
+            note: extras.note
+          } : {})
         };
       });
 
@@ -207,6 +360,7 @@ export default function AddOrderModal({ visible, onClose, onAddOrder }: AddOrder
       selectedItems.forEach(item => onAddOrder(item));
       onClose();
       setQuantities({});
+      setExtras({ selectedExtras: [], note: "" });
     }
   };
 
@@ -269,6 +423,15 @@ export default function AddOrderModal({ visible, onClose, onAddOrder }: AddOrder
           </ModalScrollContent>
         </ModalContent>
       </ModalContainer>
+
+      <ExtraOptionsModal
+        visible={showExtraOptions}
+        onClose={() => setShowExtraOptions(false)}
+        onSave={(data) => {
+          setExtras(data);
+          setShowExtraOptions(false);
+        }}
+      />
     </Modal>
   );
 } 

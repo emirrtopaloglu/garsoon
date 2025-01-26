@@ -9,7 +9,7 @@ import { BlurView } from "expo-blur";
 
 interface TableData {
   id: number;
-  status: "empty" | "occupied" | "reserved";
+  status: "empty" | "occupied";
   orders?: number;
   total?: number;
 }
@@ -19,14 +19,14 @@ interface WorkStatusButtonProps {
 }
 
 interface TableCardProps {
-  status: "empty" | "occupied" | "reserved";
+  status: "empty" | "occupied";
 }
 
 const screenWidth = Dimensions.get("window").width;
 
 const Container = styled(SafeAreaView)`
   flex: 1;
-  background-color: #F8FAFC;
+  background-color: #ffffff;
 `;
 
 const ContentContainer = styled.View`
@@ -35,114 +35,79 @@ const ContentContainer = styled.View`
   padding-bottom: 48px;
 `;
 
-const Header = styled.View`
-  margin-bottom: 32px;
-`;
-
 const WelcomeContainer = styled(BlurView)`
-  padding: 24px;
-  border-radius: 24px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  margin-bottom: 24px;
+  border-radius: 32px;
+  margin-bottom: 32px;
 `;
 
 const WelcomeHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
 `;
 
 const WelcomeLeft = styled.View``;
 
 const WelcomeText = styled.Text`
-  font-family: 'Inter';
-  font-size: 16px;
-  color: #64748B;
-  margin-bottom: 6px;
+  font-family: "Inter";
+  font-size: 18px;
+  color: #64748b;
+  margin-bottom: 8px;
   letter-spacing: -0.3px;
 `;
 
 const Title = styled.Text`
-  font-family: 'Inter';
-  font-size: 32px;
+  font-family: "Inter";
+  font-size: 36px;
   font-weight: 700;
-  color: #1E293B;
+  color: #1e293b;
   letter-spacing: -0.5px;
 `;
 
 const WorkStatusButton = styled.TouchableOpacity<WorkStatusButtonProps>`
-  background-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#06ef7f")};
-  padding: 12px 20px;
+  background-color: ${(props: any) =>
+    props.isWorking ? "#ff4757" : "#06ef7f"};
+  padding: 14px 24px;
   border-radius: 16px;
   flex-direction: row;
   align-items: center;
-  shadow-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#06ef7f")};
-  shadow-offset: 0px 4px;
-  shadow-opacity: 0.2;
-  shadow-radius: 8px;
-  elevation: 6;
+  shadow-color: ${(props: any) => (props.isWorking ? "#ff4757" : "#06ef7f")};
+  shadow-offset: 0px 8px;
+  shadow-opacity: 0.3;
+  shadow-radius: 12px;
+  elevation: 8;
 `;
 
 const WorkStatusIcon = styled(Ionicons)`
-  margin-right: 8px;
+  margin-right: 10px;
 `;
 
 const WorkStatusText = styled.Text`
   color: white;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 16px;
   letter-spacing: -0.3px;
 `;
 
-const StatsContainer = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const StatItem = styled.View`
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.5);
-  padding: 16px;
-  border-radius: 16px;
-  min-width: 90px;
-`;
-
-const StatCount = styled.Text`
-  font-size: 24px;
-  font-weight: 700;
-  color: #1E293B;
-  margin-bottom: 4px;
-`;
-
-const StatLabel = styled.Text`
-  font-size: 13px;
-  color: #64748B;
-  letter-spacing: -0.2px;
-`;
-
 const FilterContainer = styled.ScrollView`
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   flex-grow: 0;
 `;
 
 const FilterButton = styled.TouchableOpacity<{ isActive: boolean }>`
-  padding: 12px 20px;
-  background-color: ${(props: any) => (props.isActive ? "#06ef7f" : "white")};
-  border-radius: 12px;
+  padding: 12px 24px;
+  background-color: ${(props: any) => (props.isActive ? "#06ef7f" : "#fff")};
+  border-radius: 14px;
   margin-right: 12px;
-  shadow-color: ${(props: any) => (props.isActive ? "#06ef7f" : "#000")};
-  shadow-offset: 0px 2px;
-  shadow-opacity: ${(props: any) => (props.isActive ? 0.2 : 0.05)};
-  shadow-radius: 8px;
-  elevation: 3;
+  elevation: 6;
+  border: 1px solid
+    ${(props: any) => (props.isActive ? "#06ef7f" : "rgba(0,0,0,0.03)")};
 `;
 
 const FilterText = styled.Text<{ isActive: boolean }>`
-  color: ${(props: any) => (props.isActive ? "white" : "#64748B")};
-  font-size: 14px;
-  font-weight: 600;
+  color: ${(props: any) => (props.isActive ? "#FFFFFF" : "#64748B")};
+  font-size: 15px;
+  font-weight: 700;
 `;
 
 const TablesContainer = styled.ScrollView`
@@ -161,45 +126,34 @@ const TableCard = styled.TouchableOpacity<TableCardProps>`
   background-color: ${(props: any) => {
     switch (props.status) {
       case "empty":
-        return "#06ef7f";
+        return "#FFFFFF";
       case "occupied":
-        return "#EF4444";
-      case "reserved":
-        return "#F59E0B";
+        return "#FB923C";
       default:
-        return "#E2E8F0";
+        return "#F8FAFC";
     }
   }};
-  border-radius: 24px;
+  border-radius: 32px;
   margin-bottom: 24px;
   padding: 24px;
   justify-content: space-between;
   shadow-color: ${(props: any) => {
     switch (props.status) {
       case "empty":
-        return "#06ef7f";
+        return "#000000";
       case "occupied":
-        return "#EF4444";
-      case "reserved":
-        return "#F59E0B";
+        return "#FB923C";
       default:
-        return "#E2E8F0";
+        return "#000000";
     }
   }};
-  shadow-offset: 0px 6px;
-  shadow-opacity: 0.2;
-  shadow-radius: 12px;
-  elevation: 8;
-  overflow: hidden;
-`;
-
-const TableGradient = styled(LinearGradient)`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.8;
+  shadow-offset: 0px 8px;
+  shadow-opacity: ${(props: any) => (props.status === "occupied" ? 0.3 : 0.08)};
+  shadow-radius: 16px;
+  elevation: 10;
+  border: 1px solid
+    ${(props: any) =>
+      props.status === "empty" ? "rgba(0,0,0,0.03)" : "transparent"};
 `;
 
 const TableContent = styled.View`
@@ -210,31 +164,41 @@ const TableContent = styled.View`
 const TableInfo = styled.View``;
 
 const TableNumber = styled.Text`
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 700;
-  color: white;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+  color: ${(props: any) => (props.status === "empty" ? "#1E293B" : "white")};
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   letter-spacing: -0.5px;
+  margin-bottom: 8px;
 `;
 
 const TableStatus = styled.Text`
-  font-size: 17px;
-  color: white;
-  opacity: 0.95;
+  font-size: 16px;
+  color: ${(props: any) => (props.status === "empty" ? "#64748B" : "white")};
+  opacity: 0.9;
   letter-spacing: -0.3px;
-  font-weight: 500;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
 `;
 
 const TableStatusIcon = styled.View`
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  background-color: rgba(255, 255, 255, 0.2);
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background-color: ${(props: any) =>
+    props.status === "empty" ? "#F8FAFC" : "rgba(255, 255, 255, 0.2)"};
   justify-content: center;
   align-items: center;
-  margin-bottom: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 16px;
+  border: 1px solid
+    ${(props: any) =>
+      props.status === "empty"
+        ? "rgba(0,0,0,0.03)"
+        : "rgba(255, 255, 255, 0.2)"};
+  shadow-color: #000;
+  shadow-offset: 0px 4px;
+  shadow-opacity: 0.1;
+  shadow-radius: 8px;
+  elevation: 5;
 `;
 
 export default function HomePage() {
@@ -243,7 +207,7 @@ export default function HomePage() {
   const [tables, setTables] = useState<TableData[]>([
     { id: 1, status: "empty" },
     { id: 2, status: "occupied", orders: 3, total: 240 },
-    { id: 3, status: "reserved" },
+    { id: 3, status: "empty" },
     { id: 4, status: "empty" },
     { id: 5, status: "occupied", orders: 2, total: 180 },
     { id: 6, status: "empty" },
@@ -253,7 +217,6 @@ export default function HomePage() {
     { id: "all", label: "Tümü" },
     { id: "empty", label: "Boş" },
     { id: "occupied", label: "Dolu" },
-    { id: "reserved", label: "Rezerve" },
   ];
 
   const toggleWorkStatus = () => {
@@ -293,33 +256,26 @@ export default function HomePage() {
     return {
       empty: tables.filter((t) => t.status === "empty").length,
       occupied: tables.filter((t) => t.status === "occupied").length,
-      reserved: tables.filter((t) => t.status === "reserved").length,
     };
   };
 
-  const getTableStatusIcon = (status: "empty" | "occupied" | "reserved") => {
+  const getTableStatusIcon = (status: "empty" | "occupied") => {
     switch (status) {
       case "empty":
         return "restaurant-outline";
       case "occupied":
         return "people";
-      case "reserved":
-        return "time";
       default:
         return "help-outline";
     }
   };
 
-  const getTableGradientColors = (
-    status: "empty" | "occupied" | "reserved"
-  ) => {
+  const getTableGradientColors = (status: "empty" | "occupied") => {
     switch (status) {
       case "empty":
-        return ["#43A047", "#2E7D32"];
+        return ["#FFFFFF", "#F8FAFC"];
       case "occupied":
-        return ["#ff6b6b", "#e03131"];
-      case "reserved":
-        return ["#ffd93d", "#fab005"];
+        return ["#FB923C", "#F97316"];
       default:
         return ["#e0e0e0", "#ced4da"];
     }
@@ -344,7 +300,7 @@ export default function HomePage() {
             <WorkStatusButton isWorking={isWorking} onPress={toggleWorkStatus}>
               <WorkStatusIcon
                 name={isWorking ? "stop-circle" : "play"}
-                size={20}
+                size={24}
                 color="white"
               />
               <WorkStatusText>
@@ -352,21 +308,6 @@ export default function HomePage() {
               </WorkStatusText>
             </WorkStatusButton>
           </WelcomeHeader>
-
-          <StatsContainer>
-            <StatItem>
-              <StatCount>{statusCounts.empty}</StatCount>
-              <StatLabel>Boş Masa</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatCount>{statusCounts.occupied}</StatCount>
-              <StatLabel>Dolu Masa</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatCount>{statusCounts.reserved}</StatCount>
-              <StatLabel>Rezerve</StatLabel>
-            </StatItem>
-          </StatsContainer>
         </WelcomeContainer>
 
         <FilterContainer horizontal showsHorizontalScrollIndicator={false}>
@@ -391,25 +332,21 @@ export default function HomePage() {
                 status={table.status}
                 onPress={() => handleTablePress(table.id)}
               >
-                <TableGradient
-                  colors={getTableGradientColors(table.status)}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                />
                 <TableContent>
-                  <TableStatusIcon>
+                  <TableStatusIcon status={table.status}>
                     <Ionicons
                       name={getTableStatusIcon(table.status)}
-                      size={24}
-                      color="white"
+                      size={28}
+                      color={table.status === "empty" ? "#64748B" : "white"}
                     />
                   </TableStatusIcon>
                   <TableInfo>
-                    <TableNumber>Masa {table.id}</TableNumber>
-                    <TableStatus>
+                    <TableNumber status={table.status}>
+                      Masa {table.id}
+                    </TableNumber>
+                    <TableStatus status={table.status}>
                       {table.status === "empty" && "Boş"}
                       {table.status === "occupied" && "Dolu"}
-                      {table.status === "reserved" && "Rezerve"}
                     </TableStatus>
                   </TableInfo>
                 </TableContent>

@@ -17,6 +17,14 @@ interface OrderItem {
   name: string;
   price: number;
   quantity?: number;
+  extras?: number[];
+  note?: string;
+}
+
+interface ExtraOption {
+  id: number;
+  name: string;
+  price: number;
 }
 
 const Container = styled(SafeAreaView)`
@@ -131,9 +139,7 @@ const ButtonText = styled.Text`
 `;
 
 const OrderItemCard = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding: 20px;
   background-color: white;
   border-radius: 16px;
@@ -145,8 +151,34 @@ const OrderItemCard = styled.View`
   elevation: 4;
 `;
 
+const OrderItemTop = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${(props: any) => props.hasExtras ? "12px" : "0"};
+`;
+
 const OrderItemLeft = styled.View`
   flex: 1;
+`;
+
+const OrderItemExtras = styled.View`
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 12px;
+`;
+
+const OrderItemExtraText = styled.Text`
+  font-size: 14px;
+  color: #64748B;
+  margin-bottom: 4px;
+`;
+
+const OrderItemNote = styled.Text`
+  font-size: 14px;
+  color: #64748B;
+  font-style: italic;
+  margin-top: 8px;
 `;
 
 const OrderItemText = styled.Text`
@@ -185,6 +217,15 @@ const TotalText = styled.Text`
   color: #1a1a1a;
   letter-spacing: 0.5px;
 `;
+
+const extraOptions: ExtraOption[] = [
+  { id: 1, name: "Mısır", price: 5 },
+  { id: 2, name: "Mantar", price: 5 },
+  { id: 3, name: "Sucuk", price: 10 },
+  { id: 4, name: "Zeytin", price: 5 },
+  { id: 5, name: "Biber", price: 5 },
+  { id: 6, name: "Soğan", price: 5 },
+];
 
 export default function TableManagement() {
   const params = useLocalSearchParams();
@@ -305,13 +346,29 @@ export default function TableManagement() {
                 <SectionTitle>Siparişler</SectionTitle>
                 {orders.map((order) => (
                   <OrderItemCard key={order.id}>
-                    <OrderItemLeft>
-                      <OrderItemText>{order.name}</OrderItemText>
-                      <OrderItemQuantity>
-                        {order.quantity} Adet
-                      </OrderItemQuantity>
-                    </OrderItemLeft>
-                    <OrderItemPrice>{order.price} TL</OrderItemPrice>
+                    <OrderItemTop hasExtras={Boolean(order.extras?.length || order.note)}>
+                      <OrderItemLeft>
+                        <OrderItemText>{order.name}</OrderItemText>
+                        <OrderItemQuantity>{order.quantity} Adet</OrderItemQuantity>
+                      </OrderItemLeft>
+                      <OrderItemPrice>{order.price} TL</OrderItemPrice>
+                    </OrderItemTop>
+                    
+                    {(Boolean(order.extras?.length) || order.note) && (
+                      <OrderItemExtras>
+                        {order.extras && order.extras.length > 0 && (
+                          <OrderItemExtraText>
+                            Ekstralar: {order.extras.map(extraId => {
+                              const extraOption = extraOptions.find(opt => opt.id === extraId);
+                              return extraOption ? extraOption.name : '';
+                            }).join(', ')}
+                          </OrderItemExtraText>
+                        )}
+                        {order.note && (
+                          <OrderItemNote>Not: {order.note}</OrderItemNote>
+                        )}
+                      </OrderItemExtras>
+                    )}
                   </OrderItemCard>
                 ))}
                 <TotalSection>
