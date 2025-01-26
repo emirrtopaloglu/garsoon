@@ -40,12 +40,8 @@ const ContentContainer = styled.View`
 const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 24px;
-`;
-
-const HeaderLeft = styled.View`
-  flex: 1;
 `;
 
 const BackButton = styled.TouchableOpacity`
@@ -78,19 +74,13 @@ const Subtitle = styled.Text`
 `;
 
 const Card = styled(BlurView)`
-  border-radius: 24px;
   overflow: hidden;
-  margin-bottom: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 32px;
 `;
 
-const CardContent = styled.View`
-  padding: 24px;
-`;
+const CardContent = styled.View``;
 
-const Section = styled.View`
-  margin-bottom: 24px;
-`;
+const Section = styled.View``;
 
 const SectionTitle = styled.Text`
   font-size: 20px;
@@ -155,7 +145,7 @@ const OrderItemTop = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${(props: any) => props.hasExtras ? "12px" : "0"};
+  margin-bottom: ${(props: any) => (props.hasExtras ? "12px" : "0")};
 `;
 
 const OrderItemLeft = styled.View`
@@ -170,13 +160,13 @@ const OrderItemExtras = styled.View`
 
 const OrderItemExtraText = styled.Text`
   font-size: 14px;
-  color: #64748B;
+  color: #64748b;
   margin-bottom: 4px;
 `;
 
 const OrderItemNote = styled.Text`
   font-size: 14px;
-  color: #64748B;
+  color: #64748b;
   font-style: italic;
   margin-top: 8px;
 `;
@@ -245,23 +235,6 @@ export default function TableManagement() {
     return orders.reduce((total, item) => total + item.price, 0);
   };
 
-  const handleStatusChange = (newStatus: "empty" | "occupied" | "reserved") => {
-    Alert.alert(
-      "Durum Değişikliği",
-      `Masa durumunu "${newStatus}" olarak değiştirmek istiyor musunuz?`,
-      [
-        { text: "İptal", style: "cancel" },
-        {
-          text: "Evet",
-          onPress: () => {
-            setTableStatus(newStatus);
-            Alert.alert("Bilgi", "Masa durumu güncellendi.");
-          },
-        },
-      ]
-    );
-  };
-
   const handleAddOrder = (order: {
     name: string;
     price: number;
@@ -300,68 +273,49 @@ export default function TableManagement() {
     <Container>
       <ContentContainer>
         <Header>
-          <HeaderLeft>
-            <BackButton onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={24} color="#1a1a1a" />
-            </BackButton>
-            <Title>Masa {tableId}</Title>
-            <Subtitle>
-              {tableStatus === "empty" && "Boş"}
-              {tableStatus === "occupied" && "Dolu"}
-              {tableStatus === "reserved" && "Rezerve"}
-            </Subtitle>
-          </HeaderLeft>
+          <BackButton onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={24} color="#1a1a1a" />
+          </BackButton>
+          <Title>Masa {tableId}</Title>
+          <Subtitle>
+            {tableStatus === "empty" && "Boş"}
+            {tableStatus === "occupied" && "Dolu"}
+            {tableStatus === "reserved" && "Rezerve"}
+          </Subtitle>
         </Header>
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <Card intensity={80} tint="light">
             <CardContent>
               <Section>
-                <SectionTitle>Masa Durumu</SectionTitle>
-                <Button onPress={() => handleStatusChange("empty")}>
-                  <ButtonGradient
-                    colors={getButtonGradientColors()}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  />
-                  <ButtonIcon
-                    name="restaurant-outline"
-                    size={20}
-                    color="white"
-                  />
-                  <ButtonText>Boşalt</ButtonText>
-                </Button>
-                <Button onPress={() => handleStatusChange("reserved")}>
-                  <ButtonGradient
-                    colors={getButtonGradientColors()}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  />
-                  <ButtonIcon name="time" size={20} color="white" />
-                  <ButtonText>Rezerve Et</ButtonText>
-                </Button>
-              </Section>
-
-              <Section>
-                <SectionTitle>Siparişler</SectionTitle>
+                <SectionTitle>Ürünler</SectionTitle>
                 {orders.map((order) => (
                   <OrderItemCard key={order.id}>
-                    <OrderItemTop hasExtras={Boolean(order.extras?.length || order.note)}>
+                    <OrderItemTop
+                      hasExtras={Boolean(order.extras?.length || order.note)}
+                    >
                       <OrderItemLeft>
                         <OrderItemText>{order.name}</OrderItemText>
-                        <OrderItemQuantity>{order.quantity} Adet</OrderItemQuantity>
+                        <OrderItemQuantity>
+                          {order.quantity} Adet
+                        </OrderItemQuantity>
                       </OrderItemLeft>
                       <OrderItemPrice>{order.price} TL</OrderItemPrice>
                     </OrderItemTop>
-                    
+
                     {(Boolean(order.extras?.length) || order.note) && (
                       <OrderItemExtras>
                         {order.extras && order.extras.length > 0 && (
                           <OrderItemExtraText>
-                            Ekstralar: {order.extras.map(extraId => {
-                              const extraOption = extraOptions.find(opt => opt.id === extraId);
-                              return extraOption ? extraOption.name : '';
-                            }).join(', ')}
+                            Ekstralar:{" "}
+                            {order.extras
+                              .map((extraId) => {
+                                const extraOption = extraOptions.find(
+                                  (opt) => opt.id === extraId
+                                );
+                                return extraOption ? extraOption.name : "";
+                              })
+                              .join(", ")}
                           </OrderItemExtraText>
                         )}
                         {order.note && (
@@ -384,7 +338,7 @@ export default function TableManagement() {
                   end={{ x: 1, y: 1 }}
                 />
                 <ButtonIcon name="add-circle-outline" size={20} color="white" />
-                <ButtonText>Yeni Sipariş Ekle</ButtonText>
+                <ButtonText>Yeni Ürün Ekle</ButtonText>
               </Button>
 
               <Button variant="danger" onPress={handlePayment}>

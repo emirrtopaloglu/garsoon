@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dimensions } from "react-native";
+import { Alert, Dimensions, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { router } from "expo-router";
@@ -9,254 +9,309 @@ import { BlurView } from "expo-blur";
 
 interface TableData {
   id: number;
-  status: "empty" | "occupied" | "reserved";
+  status: "empty" | "occupied";
   orders?: number;
   total?: number;
-  time?: string;
-  capacity: number;
+}
+
+interface WorkStatusButtonProps {
+  isWorking: boolean;
+}
+
+interface TableCardProps {
+  status: "empty" | "occupied";
 }
 
 const screenWidth = Dimensions.get("window").width;
 
-const Container = styled(SafeAreaView).attrs({
-  edges: ["top", "right", "left"],
-})`
+const Container = styled(SafeAreaView)`
   flex: 1;
-  background-color: #f8fafc;
+  background-color: #ffffff;
 `;
 
 const ContentContainer = styled.View`
   flex: 1;
   padding: 24px;
-  padding-bottom: 100px;
+  padding-bottom: 48px;
 `;
 
-const Header = styled.View`
+const WelcomeContainer = styled(BlurView)`
+  border-radius: 32px;
   margin-bottom: 32px;
+`;
+
+const WelcomeHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const WelcomeLeft = styled.View``;
+
+const WelcomeText = styled.Text`
+  font-family: "Inter";
+  font-size: 18px;
+  color: #64748b;
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
 `;
 
 const Title = styled.Text`
   font-family: "Inter";
-  font-size: 36px;
+  font-size: 24px;
   font-weight: 700;
   color: #1e293b;
   letter-spacing: -0.5px;
-  margin-bottom: 8px;
 `;
 
-const Subtitle = styled.Text`
+const WorkStatusButton = styled.TouchableOpacity<WorkStatusButtonProps>`
+  background-color: ${(props: any) =>
+    props.isWorking ? "#ff4757" : "#06ef7f"};
+  padding: 14px 24px;
+  border-radius: 16px;
+  flex-direction: row;
+  align-items: center;
+  shadow-color: ${(props: any) => (props.isWorking ? "#ff4757" : "#06ef7f")};
+  shadow-offset: 0px 8px;
+  shadow-opacity: 0.3;
+  shadow-radius: 12px;
+  elevation: 8;
+`;
+
+const WorkStatusIcon = styled(Ionicons)`
+  margin-right: 10px;
+`;
+
+const WorkStatusText = styled.Text`
+  color: white;
+  font-weight: 700;
   font-size: 16px;
-  color: #64748b;
   letter-spacing: -0.3px;
 `;
 
-const SearchContainer = styled(BlurView)`
-  flex-direction: row;
-  align-items: center;
-  padding: 16px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
-  margin-bottom: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-`;
-
-const SearchInput = styled.TextInput`
-  flex: 1;
-  font-size: 16px;
-  color: #1e293b;
-  margin-left: 12px;
-`;
-
 const FilterContainer = styled.ScrollView`
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  border-bottom-width: 1px;
+  border-bottom-color: #ddd;
+  border-style: solid;
   flex-grow: 0;
 `;
 
 const FilterButton = styled.TouchableOpacity<{ isActive: boolean }>`
-  padding: 12px 20px;
-  background-color: ${(props: any) => (props.isActive ? "#06ef7f" : "white")};
-  border-radius: 12px;
+  padding: 12px 24px;
+  border-color: ${(props: any) => (props.isActive ? "#06ef7f" : "#fff")};
+  border-radius: 14px;
   margin-right: 12px;
-  shadow-color: ${(props: any) => (props.isActive ? "#06ef7f" : "#000")};
-  shadow-offset: 0px 2px;
-  shadow-opacity: ${(props: any) => (props.isActive ? 0.2 : 0.05)};
-  shadow-radius: 8px;
-  elevation: 3;
+  elevation: 6;
+  border-bottom-width: 2px;
+  border-bottom-color: ${(props: any) =>
+    props.isActive ? "#06ef7f" : "transparent"};
 `;
 
 const FilterText = styled.Text<{ isActive: boolean }>`
-  color: ${(props: any) => (props.isActive ? "white" : "#64748B")};
-  font-size: 14px;
-  font-weight: 600;
-`;
-
-const TablesList = styled.ScrollView`
-  flex: 1;
-`;
-
-const TableCard = styled(BlurView)`
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 24px;
-  margin-bottom: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-`;
-
-const TableCardContent = styled.TouchableOpacity`
-  padding: 20px;
-`;
-
-const TableHeader = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-`;
-
-const TableInfo = styled.View`
-  flex: 1;
-`;
-
-const TableTitle = styled.Text`
-  font-size: 20px;
+  color: ${(props: any) => (props.isActive ? "#06ef7f" : "#64748B")};
+  font-size: 15px;
   font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 4px;
-  letter-spacing: -0.3px;
 `;
 
-const TableCapacity = styled.Text`
-  font-size: 14px;
-  color: #64748b;
-  letter-spacing: -0.2px;
+const TablesContainer = styled.ScrollView`
+  flex: 1;
 `;
 
-const StatusBadge = styled.View<{ status: "empty" | "occupied" | "reserved" }>`
-  padding: 8px 16px;
-  border-radius: 12px;
+const TablesGrid = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+`;
+
+const TableCard = styled.TouchableOpacity<TableCardProps>`
+  width: ${(screenWidth - 72) / 2}px;
+  aspect-ratio: 1;
   background-color: ${(props: any) => {
     switch (props.status) {
       case "empty":
-        return "#06ef7f";
+        return "#FFFFFF";
       case "occupied":
-        return "#EF4444";
-      case "reserved":
-        return "#F59E0B";
+        return "#FB923C";
       default:
-        return "#E2E8F0";
+        return "#F8FAFC";
     }
   }};
+  border-radius: 8px;
+  margin-bottom: 24px;
+  padding: 24px;
+  justify-content: space-between;
+  shadow-color: ${(props: any) => {
+    switch (props.status) {
+      case "empty":
+        return "#000000";
+      case "occupied":
+        return "#FB923C";
+      default:
+        return "#000000";
+    }
+  }};
+  shadow-offset: 0px 8px;
+  shadow-opacity: ${(props: any) => (props.status === "occupied" ? 0.3 : 0.08)};
+  shadow-radius: 16px;
+  elevation: 10;
+  border: 1px solid
+    ${(props: any) => (props.status === "empty" ? "#f5f5f5" : "transparent")};
 `;
 
-const StatusText = styled.Text`
-  color: white;
+const TableContent = styled.View`
+  flex: 1;
+  justify-content: space-between;
+`;
+
+const TableInfo = styled.View``;
+
+const TableNumber = styled.Text`
+  font-size: 18px;
+  font-weight: 700;
+  color: ${(props: any) => (props.status === "empty" ? "#1E293B" : "white")};
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+`;
+
+const TableStatus = styled.Text`
   font-size: 14px;
+  color: ${(props: any) => (props.status === "empty" ? "#64748B" : "white")};
+  opacity: 0.9;
+  letter-spacing: -0.3px;
   font-weight: 600;
 `;
 
-const TableDetails = styled.View`
-  flex-direction: row;
+const TableStatusIcon = styled.View`
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background-color: ${(props: any) =>
+    props.status === "empty" ? "#F8FAFC" : "rgba(255, 255, 255, 0.2)"};
+  justify-content: center;
   align-items: center;
-  margin-top: 12px;
-  padding-top: 16px;
-  border-top-width: 1px;
-  border-top-color: rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  border: 1px solid
+    ${(props: any) =>
+      props.status === "empty"
+        ? "rgba(0,0,0,0.03)"
+        : "rgba(255, 255, 255, 0.2)"};
+  shadow-color: #000;
+  shadow-offset: 0px 4px;
+  shadow-opacity: 0.1;
+  shadow-radius: 8px;
+  elevation: 5;
 `;
 
-const DetailItem = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-right: 24px;
-`;
-
-const DetailText = styled.Text`
-  font-size: 14px;
-  color: #64748b;
-  margin-left: 8px;
-`;
-
-export default function TablesScreen() {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function Tables() {
+  const [isWorking, setIsWorking] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
-  const [tables] = useState<TableData[]>([
-    { id: 1, status: "empty", capacity: 4 },
-    {
-      id: 2,
-      status: "occupied",
-      orders: 3,
-      total: 240,
-      time: "1 saat 15 dk",
-      capacity: 6,
-    },
-    { id: 3, status: "reserved", time: "20:30", capacity: 2 },
-    { id: 4, status: "empty", capacity: 4 },
-    {
-      id: 5,
-      status: "occupied",
-      orders: 2,
-      total: 180,
-      time: "45 dk",
-      capacity: 4,
-    },
-    { id: 6, status: "empty", capacity: 8 },
-    { id: 7, status: "reserved", time: "21:00", capacity: 6 },
-    {
-      id: 8,
-      status: "occupied",
-      orders: 4,
-      total: 320,
-      time: "2 saat",
-      capacity: 4,
-    },
+  const [tables, setTables] = useState<TableData[]>([
+    { id: 1, status: "empty" },
+    { id: 2, status: "occupied", orders: 3, total: 240 },
+    { id: 3, status: "empty" },
+    { id: 4, status: "empty" },
+    { id: 5, status: "occupied", orders: 2, total: 180 },
+    { id: 6, status: "empty" },
   ]);
 
   const filters = [
     { id: "all", label: "Tümü" },
-    { id: "empty", label: "Boş" },
-    { id: "occupied", label: "Dolu" },
-    { id: "reserved", label: "Rezerve" },
+    { id: "empty", label: "Loca" },
+    { id: "occupied", label: "Saloon" },
   ];
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "empty":
-        return "Boş";
-      case "occupied":
-        return "Dolu";
-      case "reserved":
-        return "Rezerve";
-      default:
-        return "";
+  const toggleWorkStatus = () => {
+    if (isWorking) {
+      Alert.alert(
+        "Çalışmayı Bırak",
+        "Çalışmayı bırakmak istediğinizden emin misiniz?",
+        [
+          { text: "İptal", style: "cancel" },
+          {
+            text: "Evet",
+            onPress: () => {
+              setIsWorking(false);
+              Alert.alert("Bilgi", "Çalışma durumunuz kapatıldı.");
+            },
+          },
+        ]
+      );
+    } else {
+      setIsWorking(true);
+      Alert.alert("Bilgi", "Çalışmaya başladınız!");
     }
   };
 
-  const filteredTables = tables
-    .filter((table) => {
-      if (activeFilter === "all") return true;
-      return table.status === activeFilter;
-    })
-    .filter((table) => {
-      if (!searchQuery) return true;
-      return table.id.toString().includes(searchQuery);
-    });
+  const handleTablePress = (tableId: number) => {
+    if (!isWorking) {
+      Alert.alert(
+        "Uyarı",
+        "Masaları yönetmek için çalışmaya başlamanız gerekiyor."
+      );
+      return;
+    }
+    router.push(`/(tabs)/table-management?id=${tableId}`);
+  };
+
+  const getStatusCounts = () => {
+    return {
+      empty: tables.filter((t) => t.status === "empty").length,
+      occupied: tables.filter((t) => t.status === "occupied").length,
+    };
+  };
+
+  const getTableStatusIcon = (status: "empty" | "occupied") => {
+    switch (status) {
+      case "empty":
+        return "restaurant-outline";
+      case "occupied":
+        return "people";
+      default:
+        return "help-outline";
+    }
+  };
+
+  const getTableGradientColors = (status: "empty" | "occupied") => {
+    switch (status) {
+      case "empty":
+        return ["#FFFFFF", "#F8FAFC"];
+      case "occupied":
+        return ["#FB923C", "#F97316"];
+      default:
+        return ["#e0e0e0", "#ced4da"];
+    }
+  };
+
+  const filteredTables = tables.filter((table) => {
+    if (activeFilter === "all") return true;
+    return table.status === activeFilter;
+  });
+
+  const statusCounts = getStatusCounts();
 
   return (
     <Container>
       <ContentContainer>
-        <Header>
-          <Title>Masalar</Title>
-          <Subtitle>Tüm masaların durumunu görüntüleyin</Subtitle>
-        </Header>
-
-        <SearchContainer intensity={80}>
-          <Ionicons name="search-outline" size={20} color="#64748B" />
-          <SearchInput
-            placeholder="Masa ara..."
-            placeholderTextColor="#94A3B8"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </SearchContainer>
+        <WelcomeContainer intensity={80}>
+          <WelcomeHeader>
+            <WelcomeLeft>
+              <WelcomeText>Hoş Geldiniz</WelcomeText>
+              <Title>Masalar</Title>
+            </WelcomeLeft>
+            <WorkStatusButton isWorking={isWorking} onPress={toggleWorkStatus}>
+              <WorkStatusIcon
+                name={isWorking ? "stop-circle" : "play"}
+                size={24}
+                color="white"
+              />
+              <WorkStatusText>
+                {isWorking ? "Çalışmayı Bırak" : "İşe Başla"}
+              </WorkStatusText>
+            </WorkStatusButton>
+          </WelcomeHeader>
+        </WelcomeContainer>
 
         <FilterContainer horizontal showsHorizontalScrollIndicator={false}>
           {filters.map((filter) => (
@@ -272,68 +327,36 @@ export default function TablesScreen() {
           ))}
         </FilterContainer>
 
-        <TablesList showsVerticalScrollIndicator={false}>
-          {filteredTables.map((table) => (
-            <TableCard key={table.id} intensity={80}>
-              <TableCardContent
-                onPress={() => router.push(`/table-management?id=${table.id}`)}
+        <TablesContainer showsVerticalScrollIndicator={false}>
+          <TablesGrid>
+            {filteredTables.map((table) => (
+              <TableCard
+                key={table.id}
+                status={table.status}
+                onPress={() => handleTablePress(table.id)}
               >
-                <TableHeader>
+                <TableContent>
+                  <TableStatusIcon status={table.status}>
+                    <Ionicons
+                      name={getTableStatusIcon(table.status)}
+                      size={28}
+                      color={table.status === "empty" ? "#64748B" : "white"}
+                    />
+                  </TableStatusIcon>
                   <TableInfo>
-                    <TableTitle>Masa {table.id}</TableTitle>
-                    <TableCapacity>{table.capacity} Kişilik</TableCapacity>
+                    <TableNumber status={table.status}>
+                      Masa {table.id}
+                    </TableNumber>
+                    <TableStatus status={table.status}>
+                      {table.status === "empty" && "Boş"}
+                      {table.status === "occupied" && "Dolu"}
+                    </TableStatus>
                   </TableInfo>
-                  <StatusBadge status={table.status}>
-                    <StatusText>{getStatusText(table.status)}</StatusText>
-                  </StatusBadge>
-                </TableHeader>
-
-                {table.status !== "empty" && (
-                  <TableDetails>
-                    {table.status === "occupied" && (
-                      <>
-                        <DetailItem>
-                          <Ionicons
-                            name="time-outline"
-                            size={16}
-                            color="#64748B"
-                          />
-                          <DetailText>{table.time}</DetailText>
-                        </DetailItem>
-                        <DetailItem>
-                          <Ionicons
-                            name="receipt-outline"
-                            size={16}
-                            color="#64748B"
-                          />
-                          <DetailText>{table.orders} Sipariş</DetailText>
-                        </DetailItem>
-                        <DetailItem>
-                          <Ionicons
-                            name="wallet-outline"
-                            size={16}
-                            color="#64748B"
-                          />
-                          <DetailText>{table.total} TL</DetailText>
-                        </DetailItem>
-                      </>
-                    )}
-                    {table.status === "reserved" && (
-                      <DetailItem>
-                        <Ionicons
-                          name="time-outline"
-                          size={16}
-                          color="#64748B"
-                        />
-                        <DetailText>Rezervasyon: {table.time}</DetailText>
-                      </DetailItem>
-                    )}
-                  </TableDetails>
-                )}
-              </TableCardContent>
-            </TableCard>
-          ))}
-        </TablesList>
+                </TableContent>
+              </TableCard>
+            ))}
+          </TablesGrid>
+        </TablesContainer>
       </ContentContainer>
     </Container>
   );
