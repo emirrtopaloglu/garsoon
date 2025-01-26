@@ -74,10 +74,10 @@ const FilterContainer = styled.ScrollView`
 
 const FilterButton = styled.TouchableOpacity<{ isActive: boolean }>`
   padding: 12px 20px;
-  background-color: ${(props: any) => (props.isActive ? "#22C55E" : "white")};
+  background-color: ${(props: any) => (props.isActive ? "#06ef7f" : "white")};
   border-radius: 12px;
   margin-right: 12px;
-  shadow-color: ${(props: any) => (props.isActive ? "#22C55E" : "#000")};
+  shadow-color: ${(props: any) => (props.isActive ? "#06ef7f" : "#000")};
   shadow-offset: 0px 2px;
   shadow-opacity: ${(props: any) => (props.isActive ? 0.2 : 0.05)};
   shadow-radius: 8px;
@@ -137,7 +137,7 @@ const StatusBadge = styled.View<{ status: "empty" | "occupied" | "reserved" }>`
   background-color: ${(props: any) => {
     switch (props.status) {
       case "empty":
-        return "#22C55E";
+        return "#06ef7f";
       case "occupied":
         return "#EF4444";
       case "reserved":

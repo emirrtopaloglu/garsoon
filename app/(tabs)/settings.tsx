@@ -69,7 +69,7 @@ const SettingIcon = styled.View`
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background-color: #22C55E;
+  background-color: #06ef7f;
   justify-content: center;
   align-items: center;
   margin-right: 16px;

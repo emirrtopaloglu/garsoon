@@ -32,7 +32,7 @@ const Container = styled(SafeAreaView)`
 const ContentContainer = styled.View`
   flex: 1;
   padding: 24px;
-  padding-bottom: 100px;
+  padding-bottom: 48px;
 `;
 
 const Header = styled.View`
@@ -73,12 +73,12 @@ const Title = styled.Text`
 `;
 
 const WorkStatusButton = styled.TouchableOpacity<WorkStatusButtonProps>`
-  background-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#22C55E")};
+  background-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#06ef7f")};
   padding: 12px 20px;
   border-radius: 16px;
   flex-direction: row;
   align-items: center;
-  shadow-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#22C55E")};
+  shadow-color: ${(props: any) => (props.isWorking ? "#EF4444" : "#06ef7f")};
   shadow-offset: 0px 4px;
   shadow-opacity: 0.2;
   shadow-radius: 8px;
@@ -129,10 +129,10 @@ const FilterContainer = styled.ScrollView`
 
 const FilterButton = styled.TouchableOpacity<{ isActive: boolean }>`
   padding: 12px 20px;
-  background-color: ${(props: any) => (props.isActive ? "#22C55E" : "white")};
+  background-color: ${(props: any) => (props.isActive ? "#06ef7f" : "white")};
   border-radius: 12px;
   margin-right: 12px;
-  shadow-color: ${(props: any) => (props.isActive ? "#22C55E" : "#000")};
+  shadow-color: ${(props: any) => (props.isActive ? "#06ef7f" : "#000")};
   shadow-offset: 0px 2px;
   shadow-opacity: ${(props: any) => (props.isActive ? 0.2 : 0.05)};
   shadow-radius: 8px;
@@ -161,7 +161,7 @@ const TableCard = styled.TouchableOpacity<TableCardProps>`
   background-color: ${(props: any) => {
     switch (props.status) {
       case "empty":
-        return "#22C55E";
+        return "#06ef7f";
       case "occupied":
         return "#EF4444";
       case "reserved":
@@ -177,7 +177,7 @@ const TableCard = styled.TouchableOpacity<TableCardProps>`
   shadow-color: ${(props: any) => {
     switch (props.status) {
       case "empty":
-        return "#22C55E";
+        return "#06ef7f";
       case "occupied":
         return "#EF4444";
       case "reserved":

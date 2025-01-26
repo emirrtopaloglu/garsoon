@@ -108,7 +108,7 @@ const StatusBadge = styled.View<{ status: "active" | "inactive" }>`
   padding: 6px 12px;
   border-radius: 20px;
   background-color: ${(props: any) =>
-    props.status === "active" ? "#22C55E" : "#94A3B8"};
+    props.status === "active" ? "#06ef7f" : "#94A3B8"};
 `;
 
 const StatusText = styled.Text`
@@ -124,10 +124,10 @@ const AddButton = styled.TouchableOpacity`
   width: 60px;
   height: 60px;
   border-radius: 30px;
-  background-color: #22C55E;
+  background-color: #06ef7f;
   justify-content: center;
   align-items: center;
-  shadow-color: #22C55E;
+  shadow-color: #06ef7f;
   shadow-offset: 0px 4px;
   shadow-opacity: 0.3;
   shadow-radius: 8px;
